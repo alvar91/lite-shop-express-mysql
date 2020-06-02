@@ -20,7 +20,7 @@ app.listen(3000, function () {
 
 app.get("/", function (req, res) {
   con.query("SELECT * FROM goods", function (error, result) {
-    if (error) throw err;
+    if (error) throw error;
     let goods = {};
     for (let i = 0; i < result.length; i++) {
       goods[result[i]["id"]] = result[i];
@@ -41,7 +41,7 @@ app.get("/cat", function (req, res) {
       error,
       result
     ) {
-      if (error) reject(err);
+      if (error) reject(error);
       resolve(result);
     });
   });
@@ -50,7 +50,7 @@ app.get("/cat", function (req, res) {
       error,
       result
     ) {
-      if (error) reject(err);
+      if (error) reject(error);
       resolve(result);
     });
   });
@@ -61,5 +61,17 @@ app.get("/cat", function (req, res) {
       cat: JSON.parse(JSON.stringify(value[0])),
       goods: JSON.parse(JSON.stringify(value[1])),
     });
+  });
+});
+
+app.get("/goods", function (req, res) {
+  console.log(req.query.id);
+  con.query("SELECT * FROM goods WHERE id=" + req.query.id, function (
+    error,
+    result,
+    fields
+  ) {
+    if (error) throw error;
+    res.render("goods", { goods: JSON.parse(JSON.stringify(result)) });
   });
 });
