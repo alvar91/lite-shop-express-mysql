@@ -7,10 +7,24 @@ document.querySelector("#lite-shop-order").onsubmit = function (event) {
 
   if (!document.querySelector("#rule").checked) {
     //с правилами не согласен
+    Swal.fire({
+      title: "Warning",
+      text: "Read and accept the rule",
+      type: "info",
+      confirmButtonText: "Ok",
+    });
+    return false;
   }
 
   if (username === "" || phone === "" || email === "" || address === "") {
     //не заполнены поля
+    Swal.fire({
+      title: "Warning",
+      text: "Fill all fields",
+      type: "info",
+      confirmButtonText: "Ok",
+    });
+    return false;
   }
 
   fetch("/finish-order", {
@@ -32,7 +46,19 @@ document.querySelector("#lite-shop-order").onsubmit = function (event) {
     })
     .then(function (body) {
       if (body == 1) {
+        Swal.fire({
+          title: "Success",
+          text: "Success",
+          type: "info",
+          confirmButtonText: "Ok",
+        });
       } else {
+        Swal.fire({
+          title: "Problem with mail",
+          text: "Error",
+          type: "error",
+          confirmButtonText: "Ok",
+        });
       }
     });
 };
