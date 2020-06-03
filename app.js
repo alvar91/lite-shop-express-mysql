@@ -21,12 +21,16 @@ app.listen(3000, function () {
 app.get("/", function (req, res) {
   con.query("SELECT * FROM goods", function (error, result) {
     if (error) throw error;
+
     let goods = {};
     for (let i = 0; i < result.length; i++) {
       goods[result[i]["id"]] = result[i];
     }
+
     console.log(JSON.parse(JSON.stringify(goods)));
     res.render("main", {
+      foo: "hello",
+      bar: 7,
       goods: JSON.parse(JSON.stringify(goods)),
     });
   });
@@ -73,5 +77,17 @@ app.get("/goods", function (req, res) {
   ) {
     if (error) throw error;
     res.render("goods", { goods: JSON.parse(JSON.stringify(result)) });
+  });
+});
+
+app.post("/get-category-list", function (req, res) {
+  con.query("SELECT id, category FROM category", function (
+    error,
+    result,
+    fields
+  ) {
+    if (error) throw error;
+    console.log(result);
+    res.json(result);
   });
 });
