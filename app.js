@@ -7,6 +7,8 @@ app.set("view engine", "pug");
 
 let mysql = require("mysql");
 
+app.use(express.json());
+
 let con = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -81,6 +83,7 @@ app.get("/goods", function (req, res) {
 });
 
 app.post("/get-category-list", function (req, res) {
+
   con.query("SELECT id, category FROM category", function (
     error,
     result,
@@ -90,4 +93,22 @@ app.post("/get-category-list", function (req, res) {
     console.log(result);
     res.json(result);
   });
+});
+
+app.post("/get-goods-info", function (req, res) {
+  console.log(req.body.key);
+  con.query(
+    "SELECT id,name,cost FROM goods WHERE id IN (" +
+      req.body.key.join(",") +
+      ")",
+    function (error, result, fields) {
+      if (error) throw error;
+      console.log(result);
+      let goods = {};
+      for (let i = 0; i < result.length; i++) {
+        goods[result[i]["id"]] = result[i];
+      }
+      res.json(goods);
+    }
+  );
 });
