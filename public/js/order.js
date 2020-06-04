@@ -16,7 +16,7 @@ document.querySelector("#lite-shop-order").onsubmit = function (event) {
     return false;
   }
 
-  if (username == "" || phone == "" || email == "" || address == "") {
+  if (username === "" || phone === "" || email === "" || address === "") {
     //не заполнены поля
     Swal.fire({
       title: "Warning",

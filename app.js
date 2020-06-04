@@ -39,7 +39,7 @@ app.use(function (req, res, next) {
 app.get("/", function (req, res) {
   let cat = new Promise(function (resolve, reject) {
     con.query(
-      "select id,name, cost, image, category from (select id,name,cost,image,category, if(if(@curr_category != category, @curr_category := category, '') != '', @k := 0, @k := @k + 1) as ind   from goods, ( select @curr_category := '' ) v ) goods where ind < 3",
+      "select id,slug,name, cost, image, category from (select id,slug,name,cost,image,category, if(if(@curr_category != category, @curr_category := category, '') != '', @k := 0, @k := @k + 1) as ind   from goods, ( select @curr_category := '' ) v ) goods where ind < 3",
       function (error, result, field) {
         if (error) return reject(error);
         resolve(result);
@@ -93,16 +93,17 @@ app.get("/cat", function (req, res) {
   });
 });
 
-app.get("/goods", function (req, res) {
-  console.log(req.query.id);
-  con.query("SELECT * FROM goods WHERE id=" + req.query.id, function (
-    error,
-    result,
-    fields
-  ) {
-    if (error) throw error;
-    res.render("goods", { goods: JSON.parse(JSON.stringify(result)) });
-  });
+app.get("/goods/*", function (req, res) {
+  console.log("work");
+  console.log(req.params);
+  con.query(
+    'SELECT * FROM goods WHERE slug="' + req.params["0"] + '"',
+    function (error, result, fields) {
+      if (error) throw error;
+      console.log(result);
+      res.render("goods", { goods: JSON.parse(JSON.stringify(result)) });
+    }
+  );
 });
 
 app.get("/order", function (req, res) {
