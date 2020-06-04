@@ -8,6 +8,7 @@ app.set("view engine", "pug");
 let mysql = require("mysql");
 
 app.use(express.json());
+app.use(express.urlencoded());
 
 const nodemailer = require("nodemailer");
 
@@ -176,6 +177,43 @@ ON shop_order.user_id = user_info.id ORDER BY id DESC`,
       if (error) throw error;
       console.log(result);
       res.render("admin-order", { order: JSON.parse(JSON.stringify(result)) });
+    }
+  );
+});
+
+app.get("/login", function (req, res) {
+  res.render("login", {});
+});
+
+app.post("/login", function (req, res) {
+  console.log("=======================");
+  console.log(req.body);
+  console.log(req.body.login);
+  console.log(req.body.password);
+  console.log("=======================");
+  con.query(
+    'SELECT * FROM user WHERE login="' +
+      req.body.login +
+      '" and password="' +
+      req.body.password +
+      '"',
+    function (error, result) {
+      if (error) reject(error);
+      console.log(result);
+      console.log(result.length);
+      if (result.length == 0) {
+        console.log("error user not found");
+        res.redirect("/login");
+      } else {
+        result = JSON.parse(JSON.stringify(result));
+        res.cookie("hash", "blablabla");
+
+        sql = "UPDATE user  SET hash='blablabla' WHERE id=" + result[0]["id"];
+        con.query(sql, function (error, resultQuery) {
+          if (error) throw error;
+          res.redirect("/admin");
+        });
+      }
     }
   );
 });
