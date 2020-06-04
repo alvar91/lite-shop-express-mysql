@@ -101,7 +101,17 @@ app.get("/goods/*", function (req, res) {
     function (error, result, fields) {
       if (error) throw error;
       console.log(result);
-      res.render("goods", { goods: JSON.parse(JSON.stringify(result)) });
+      result = JSON.parse(JSON.stringify(result));
+      console.log(result[0]["id"]);
+      con.query(
+        "SELECT * FROM images WHERE goods_id=" + result[0]["id"],
+        function (error, goodsImages, fields) {
+          if (error) throw error;
+          console.log(goodsImages);
+          goodsImages = JSON.parse(JSON.stringify(goodsImages));
+          res.render("goods", { goods: result, goods_images: goodsImages });
+        }
+      );
     }
   );
 });
